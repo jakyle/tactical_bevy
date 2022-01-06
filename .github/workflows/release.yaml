@@ -7,7 +7,7 @@ on:
 
 # ToDo: adapt names
 env:
-  GAME_EXECUTABLE_NAME: bevy_game
+  GAME_EXECUTABLE_NAME: bevy_tactical
   GAME_OSX_APP_NAME: BevyGame
 
 jobs:
