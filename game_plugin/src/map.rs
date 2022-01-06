@@ -16,7 +16,7 @@ fn spawn_camera(mut commands: Commands) {
     commands.spawn_bundle(OrthographicCameraBundle::new_2d());
 }
 
-pub struct MapTransform(pub Transform);
+pub struct TileSize(pub Vec2);
 
 fn spawn_map(
     mut commands: Commands,
@@ -46,6 +46,8 @@ fn spawn_map(
 
     layer_builder.set_all(TileBundle::default());
 
+    let tile_size = layer_builder.settings.tile_size;
+
     // Builds the layer.
     // Note: Once this is called you can no longer edit the layer until a hard sync in bevy.
     let layer_entity = map_query.build_layer(&mut commands, layer_builder, material_handle);
@@ -60,8 +62,8 @@ fn spawn_map(
     commands
         .entity(map_entity)
         .insert(map)
-        .insert(grid_transform.clone())
+        .insert(grid_transform)
         .insert(GlobalTransform::default());
 
-    commands.insert_resource(MapTransform(grid_transform));
+    commands.insert_resource(TileSize(tile_size));
 }
