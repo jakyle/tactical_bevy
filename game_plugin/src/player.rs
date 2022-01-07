@@ -2,7 +2,7 @@ use std::ops::{Deref, DerefMut};
 
 use crate::loading::TextureAssets;
 use crate::GameState;
-use crate::{actions::Actions, map::TileSize};
+use crate::{map::TileSize, movement_actions::MoveActions};
 use bevy::prelude::*;
 use bevy_ecs_tilemap::MapQuery;
 
@@ -121,7 +121,7 @@ fn place_sprite_on_tile(
 
 fn start_move(
     tile_size: Res<TileSize>,
-    actions: Res<Actions>,
+    actions: Res<MoveActions>,
     map_query: MapQuery,
     mut player_query: Query<(&mut IsMoving, &GridPosition), With<Player>>,
 ) {
@@ -138,11 +138,12 @@ fn start_move(
         let neighbors = map_query.get_tile_neighbors(**grid_position, 0u16, 0u16); // TODO: figure out a way to constantly pass in the correct map id and layer id
 
         let difference_dest = direction + Vec2::new(grid_position.x as f32, grid_position.y as f32);
-        let difference_dest = IVec2::new(difference_dest.x as i32, difference_dest.y as i32);
+        let neighbor_direction = IVec2::new(difference_dest.x as i32, difference_dest.y as i32);
 
-        let is_neighbor = neighbors.iter().find(|&(loc, _)| loc == &difference_dest);
-
-        if let Some((neighbor, Some(_))) = is_neighbor {
+        if let Some((neighbor, Some(_))) = neighbors
+            .iter()
+            .find(|&(neighbor_loc, _)| neighbor_loc == &neighbor_direction)
+        {
             let destination = Vec3::new(
                 (neighbor.x as f32 * tile_size.0.x) + (tile_size.0.x / 2.),
                 (neighbor.y as f32 * tile_size.0.y) + (tile_size.0.y / 2.),
@@ -163,7 +164,7 @@ fn move_player(
         if let Some(destination) = **is_moving {
             let current_position = transform.translation;
 
-            if current_position.distance(destination) > 0.5 {
+            if current_position.distance(destination) > 0.4 {
                 let final_destination = (destination - current_position).normalize();
 
                 let speed = 150.;

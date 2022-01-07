@@ -1,5 +1,5 @@
-use crate::actions::Actions;
 use crate::loading::AudioAssets;
+use crate::movement_actions::MoveActions;
 use crate::GameState;
 use bevy::prelude::*;
 use bevy_kira_audio::{Audio, AudioPlugin};
@@ -25,7 +25,7 @@ fn start_audio(audio_assets: Res<AudioAssets>, audio: Res<Audio>) {
     audio.pause();
 }
 
-fn control_flying_sound(actions: Res<Actions>, audio: Res<Audio>) {
+fn control_flying_sound(actions: Res<MoveActions>, audio: Res<Audio>) {
     if actions.player_movement.is_some() {
         audio.resume();
     } else {

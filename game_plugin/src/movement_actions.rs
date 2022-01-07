@@ -1,24 +1,24 @@
 use crate::GameState;
 use bevy::prelude::*;
 
-pub struct ActionsPlugin;
+pub struct MoveActionsPlugin;
 
 // This plugin listens for keyboard input and converts the input into Actions
 // Actions can then be used as a resource in other systems to act on the player input.
-impl Plugin for ActionsPlugin {
+impl Plugin for MoveActionsPlugin {
     fn build(&self, app: &mut AppBuilder) {
-        app.init_resource::<Actions>().add_system_set(
+        app.init_resource::<MoveActions>().add_system_set(
             SystemSet::on_update(GameState::Playing).with_system(set_movement_actions.system()),
         );
     }
 }
 
 #[derive(Default)]
-pub struct Actions {
+pub struct MoveActions {
     pub player_movement: Option<Vec2>,
 }
 
-fn set_movement_actions(mut actions: ResMut<Actions>, keyboard_input: Res<Input<KeyCode>>) {
+fn set_movement_actions(mut actions: ResMut<MoveActions>, keyboard_input: Res<Input<KeyCode>>) {
     if GameControl::Up.just_released(&keyboard_input)
         || GameControl::Up.pressed(&keyboard_input)
         || GameControl::Left.just_released(&keyboard_input)
